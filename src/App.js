@@ -15,9 +15,15 @@ class App extends Component {
 	constructor() {
 		super()
 		this.state = {
-			robots: robots,
+			robots: [],
 			searchfield: ''
 		}
+	}
+
+	componentDidMount() {
+		fetch('https://jsonplaceholder.typicode.com/users')
+			.then( response => response.json() )
+			.then( users => this.setState({robots:users}));
 	}
 	
 	onInputChange = (event) => {
@@ -26,16 +32,21 @@ class App extends Component {
 	render(){
 		
 		const filteredRobots = this.state.robots.filter(robot => {
-			return robot.name.toLowerCase().includes(this.state.searchfield.toLowerCase());
+			return robot.name.toLowerCase().includes(this.state.searchfield.trim().toLowerCase());
 		});
 
-		return(
-			<div className='tc' >
-				<h1>RoboFriends</h1>
-				<SearchBox searchChange={this.onInputChange} />
-				<CardList robots={filteredRobots} />	
-			</div>
-		);
+		if(this.state.robots === 0){
+				return <h1>WAITING IS GOOD</h1>;
+			}
+		 else {
+			 	return(		
+					<div className='tc' >
+						<h1>RoboFriends</h1>
+						<SearchBox searchChange={this.onInputChange} />
+						<CardList robots={filteredRobots} />	
+					</div>
+				);
+			}	
 	}
 }
 
